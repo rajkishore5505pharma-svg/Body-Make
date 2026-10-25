@@ -1,325 +1,440 @@
-/* ==========================================================================
-   CSS Variables & Design Tokens
-   ========================================================================== */
-:root {
-  /* Color Palette */
-  --bg-primary: #090d16;
-  --surface-card: rgba(19, 26, 42, 0.75);
-  --surface-border: rgba(255, 255, 255, 0.08);
-  --surface-hover: rgba(255, 255, 255, 0.12);
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  
+  <title>PulseFit AI Tracker</title>
+  
+  <!-- PWA & Mobile Web App Meta Tags -->
+  <meta name="theme-color" content="#090d16" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="PulseFit" />
+  <link rel="manifest" href="manifest.json" />
 
-  --accent-green: #00f59b;
-  --accent-glow: rgba(0, 245, 155, 0.35);
-  --accent-danger: #ff3b5c;
+  <!-- Preconnect & Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
 
-  --text-main: #f8fafc;
-  --text-muted: #8492a6;
+  <style>
+    /* ==========================================================================
+       CSS Variables & Design Tokens
+       ========================================================================== */
+    :root {
+      /* Color Palette */
+      --bg-primary: #090d16;
+      --surface-card: rgba(19, 26, 42, 0.75);
+      --surface-border: rgba(255, 255, 255, 0.08);
+      --surface-hover: rgba(255, 255, 255, 0.12);
 
-  /* Typography Scale (fluid via clamp) */
-  --font-xs: clamp(0.688rem, 2.5vw, 0.75rem);
-  --font-sm: clamp(0.813rem, 3vw, 0.875rem);
-  --font-md: clamp(0.938rem, 3.5vw, 1rem);
-  --font-lg: clamp(1.25rem, 4.5vw, 1.5rem);
-  --font-xl: clamp(1.75rem, 6vw, 2.25rem);
+      --accent-green: #00f59b;
+      --accent-glow: rgba(0, 245, 155, 0.35);
+      --accent-danger: #ff3b5c;
 
-  /* Geometry & Spacing */
-  --radius-xl: 28px;
-  --radius-lg: 20px;
-  --radius-md: 14px;
-  --radius-pill: 9999px;
-  --safe-bottom: env(safe-area-inset-bottom, 16px);
-  --safe-top: env(safe-area-inset-top, 16px);
-}
+      --text-main: #f8fafc;
+      --text-muted: #8492a6;
 
-/* ==========================================================================
-   Base & Resets
-   ========================================================================== */
-*, *::before, *::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  -webkit-tap-highlight-color: transparent;
-  user-select: none;
-}
+      /* Responsive Typography Scale (fluid via clamp) */
+      --font-xs: clamp(0.688rem, 2.5vw, 0.75rem);
+      --font-sm: clamp(0.813rem, 3vw, 0.875rem);
+      --font-md: clamp(0.938rem, 3.5vw, 1rem);
+      --font-lg: clamp(1.25rem, 4.5vw, 1.5rem);
+      --font-xl: clamp(1.75rem, 6vw, 2.25rem);
 
-html, body {
-  width: 100%;
-  height: 100%;
-  background-color: var(--bg-primary);
-  color: var(--text-main);
-  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
-  overflow: hidden;
-}
+      /* Geometry & Safe Area Spacing */
+      --radius-xl: 28px;
+      --radius-lg: 20px;
+      --radius-md: 14px;
+      --radius-pill: 9999px;
+      --safe-bottom: env(safe-area-inset-bottom, 16px);
+      --safe-top: env(safe-area-inset-top, 16px);
+    }
 
-/* ==========================================================================
-   Fixed-width App Shell Layout (Max 480px)
-   ========================================================================== */
-.app-shell {
-  width: 100%;
-  max-width: 480px;
-  height: 100dvh; /* Dynamic viewport height prevents mobile bar overlap */
-  margin: 0 auto;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  position: relative;
-  background-color: var(--bg-primary);
-  padding: calc(var(--safe-top) + 8px) 16px var(--safe-bottom) 16px;
-}
+    /* ==========================================================================
+       Base Resets
+       ========================================================================== */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
 
-/* ==========================================================================
-   Header Section
-   ========================================================================== */
-.app-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  height: 48px;
-  margin-bottom: 8px;
-  z-index: 10;
-}
+    html, body {
+      width: 100%;
+      height: 100%;
+      background-color: var(--bg-primary);
+      color: var(--text-main);
+      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      overflow: hidden;
+    }
 
-.user-chip {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background: var(--surface-card);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid var(--surface-border);
-  padding: 6px 14px;
-  border-radius: var(--radius-pill);
-}
+    /* ==========================================================================
+       Fixed-Width App Shell Layout (max-width: 480px)
+       ========================================================================== */
+    .app-shell {
+      width: 100%;
+      max-width: 480px;
+      height: 100dvh; /* Dynamic viewport units prevent browser toolbar clipping */
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      background-color: var(--bg-primary);
+      padding: calc(var(--safe-top) + 8px) 16px calc(var(--safe-bottom) + 8px) 16px;
+    }
 
-.status-indicator {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--accent-green);
-  box-shadow: 0 0 8px var(--accent-green);
-}
+    /* ==========================================================================
+       Header Section
+       ========================================================================== */
+    .app-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 48px;
+      margin-bottom: 8px;
+      z-index: 10;
+    }
 
-.exercise-name {
-  font-size: var(--font-sm);
-  font-weight: 600;
-  letter-spacing: -0.01em;
-}
+    .user-chip {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--surface-card);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--surface-border);
+      padding: 6px 14px;
+      border-radius: var(--radius-pill);
+    }
 
-.icon-btn {
-  background: var(--surface-card);
-  border: 1px solid var(--surface-border);
-  color: var(--text-main);
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: background 0.2s ease, transform 0.15s ease;
-}
+    .status-indicator {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent-green);
+      box-shadow: 0 0 8px var(--accent-green);
+    }
 
-.icon-btn:active {
-  transform: scale(0.92);
-  background: var(--surface-hover);
-}
+    .exercise-name {
+      font-size: var(--font-sm);
+      font-weight: 600;
+      letter-spacing: -0.01em;
+    }
 
-/* ==========================================================================
-   Viewfinder Section (3:4 Vertical Aspect Ratio)
-   ========================================================================== */
-.viewport-section {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  min-height: 0; /* Crucial for nested flexbox containment */
-  margin-bottom: 12px;
-}
+    .icon-btn {
+      background: var(--surface-card);
+      border: 1px solid var(--surface-border);
+      color: var(--text-main);
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background 0.2s ease, transform 0.15s ease;
+    }
 
-.viewfinder-frame {
-  width: 100%;
-  height: auto;
-  max-height: 100%;
-  aspect-ratio: 3 / 4;
-  position: relative;
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-  background-color: #04060b;
-  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.45);
-  border: 1px solid var(--surface-border);
-}
+    .icon-btn:active {
+      transform: scale(0.92);
+      background: var(--surface-hover);
+    }
 
-#camera-stream,
-.pose-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transform: scaleX(-1); /* Mirrors front-facing camera */
-}
+    /* ==========================================================================
+       3:4 Vertical Camera Viewfinder Frame
+       ========================================================================== */
+    .viewport-section {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      min-height: 0; /* Ensures proper aspect ratio scaling in flex layout */
+      margin-bottom: 12px;
+    }
 
-.pose-overlay {
-  pointer-events: none;
-}
+    .viewfinder-frame {
+      width: 100%;
+      height: auto;
+      max-height: 100%;
+      aspect-ratio: 3 / 4;
+      position: relative;
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      background-color: #04060b;
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.45);
+      border: 1px solid var(--surface-border);
+    }
 
-/* Reticle brackets for pose positioning */
-.reticle {
-  position: absolute;
-  width: 24px;
-  height: 24px;
-  border: 2px solid rgba(255, 255, 255, 0.4);
-  pointer-events: none;
-}
-.corner-tl { top: 16px; left: 16px; border-right: none; border-bottom: none; border-top-left-radius: 6px; }
-.corner-tr { top: 16px; right: 16px; border-left: none; border-bottom: none; border-top-right-radius: 6px; }
-.corner-bl { bottom: 16px; left: 16px; border-right: none; border-top: none; border-bottom-left-radius: 6px; }
-.corner-br { bottom: 16px; right: 16px; border-left: none; border-top: none; border-bottom-right-radius: 6px; }
+    #camera-stream,
+    .pose-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transform: scaleX(-1); /* Mirrors front-facing camera preview */
+    }
 
-/* Real-time HUD Pill */
-.hud-tag {
-  position: absolute;
-  top: 14px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: rgba(9, 13, 22, 0.7);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border: 1px solid var(--surface-border);
-  padding: 4px 12px;
-  border-radius: var(--radius-pill);
-  font-size: var(--font-xs);
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  color: var(--text-main);
-}
+    .pose-overlay {
+      pointer-events: none;
+    }
 
-.hud-pulse {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--accent-green);
-  animation: pulse 1.5s infinite;
-}
+    /* Corner Positioning Brackets */
+    .reticle {
+      position: absolute;
+      width: 24px;
+      height: 24px;
+      border: 2px solid rgba(255, 255, 255, 0.4);
+      pointer-events: none;
+    }
+    .corner-tl { top: 16px; left: 16px; border-right: none; border-bottom: none; border-top-left-radius: 6px; }
+    .corner-tr { top: 16px; right: 16px; border-left: none; border-bottom: none; border-top-right-radius: 6px; }
+    .corner-bl { bottom: 16px; left: 16px; border-right: none; border-top: none; border-bottom-left-radius: 6px; }
+    .corner-br { bottom: 16px; right: 16px; border-left: none; border-top: none; border-bottom-right-radius: 6px; }
 
-@keyframes pulse {
-  0% { transform: scale(0.9); opacity: 0.7; }
-  50% { transform: scale(1.3); opacity: 1; }
-  100% { transform: scale(0.9); opacity: 0.7; }
-}
+    /* Top HUD Badge */
+    .hud-tag {
+      position: absolute;
+      top: 14px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(9, 13, 22, 0.7);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 1px solid var(--surface-border);
+      padding: 4px 12px;
+      border-radius: var(--radius-pill);
+      font-size: var(--font-xs);
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--text-main);
+    }
 
-/* ==========================================================================
-   Clean Control Panel Card (Bottom Deck)
-   ========================================================================== */
-.control-panel {
-  background: var(--surface-card);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid var(--surface-border);
-  border-radius: var(--radius-xl);
-  padding: 16px 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  z-index: 10;
-}
+    .hud-pulse {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent-green);
+      animation: pulse 1.5s infinite;
+    }
 
-/* Metrics Dashboard Inside Card */
-.metrics-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
-  text-align: center;
-  border-bottom: 1px solid var(--surface-border);
-  padding-bottom: 12px;
-}
+    @keyframes pulse {
+      0% { transform: scale(0.9); opacity: 0.7; }
+      50% { transform: scale(1.3); opacity: 1; }
+      100% { transform: scale(0.9); opacity: 0.7; }
+    }
 
-.metric-card {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
+    /* ==========================================================================
+       Bottom Control Panel Card
+       ========================================================================== */
+    .control-panel {
+      background: var(--surface-card);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--surface-border);
+      border-radius: var(--radius-xl);
+      padding: 16px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      z-index: 10;
+    }
 
-.metric-label {
-  font-size: var(--font-xs);
-  color: var(--text-muted);
-  font-weight: 700;
-  letter-spacing: 0.05em;
-}
+    /* Live Session Stats */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      text-align: center;
+      border-bottom: 1px solid var(--surface-border);
+      padding-bottom: 12px;
+    }
 
-.metric-value {
-  font-size: var(--font-lg);
-  font-weight: 800;
-  color: var(--text-main);
-  letter-spacing: -0.02em;
-}
+    .metric-card {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
 
-/* Action Trigger Buttons */
-.actions-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 8px;
-}
+    .metric-label {
+      font-size: var(--font-xs);
+      color: var(--text-muted);
+      font-weight: 700;
+      letter-spacing: 0.05em;
+    }
 
-.secondary-btn {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid var(--surface-border);
-  color: var(--text-main);
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-}
+    .metric-value {
+      font-size: var(--font-lg);
+      font-weight: 800;
+      color: var(--text-main);
+      letter-spacing: -0.02em;
+    }
 
-.secondary-btn:active {
-  transform: scale(0.9);
-  background: var(--surface-hover);
-}
+    /* Control Panel Buttons */
+    .actions-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 8px;
+    }
 
-/* Elevated Primary Record / Shutter Button */
-.primary-record-btn {
-  width: 72px;
-  height: 72px;
-  border-radius: 50%;
-  background: transparent;
-  border: 3px solid var(--accent-green);
-  box-shadow: 0 0 16px var(--accent-glow);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  padding: 4px;
-  transition: transform 0.2s ease;
-}
+    .secondary-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--surface-border);
+      color: var(--text-main);
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
 
-.primary-record-btn:active {
-  transform: scale(0.93);
-}
+    .secondary-btn:active {
+      transform: scale(0.9);
+      background: var(--surface-hover);
+    }
 
-.record-core {
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  background-color: var(--accent-green);
-  transition: all 0.2s ease;
-}
+    /* Primary Start / Stop Shutter */
+    .primary-record-btn {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: transparent;
+      border: 3px solid var(--accent-green);
+      box-shadow: 0 0 16px var(--accent-glow);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      padding: 4px;
+      transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    }
 
-/* Active recording toggle state (via JS class toggle) */
-.primary-record-btn.is-active .record-core {
-  border-radius: 8px;
-  background-color: var(--accent-danger);
-  transform: scale(0.55);
-}
-.primary-record-btn.is-active {
-  border-color: var(--accent-danger);
-  box-shadow: 0 0 16px rgba(255, 59, 92, 0.4);
-}
+    .primary-record-btn:active {
+      transform: scale(0.93);
+    }
+
+    .record-core {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background-color: var(--accent-green);
+      transition: all 0.2s ease;
+    }
+
+    /* Active recording visual state */
+    .primary-record-btn.is-active {
+      border-color: var(--accent-danger);
+      box-shadow: 0 0 16px rgba(255, 59, 92, 0.4);
+    }
+
+    .primary-record-btn.is-active .record-core {
+      border-radius: 8px;
+      background-color: var(--accent-danger);
+      transform: scale(0.55);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Max 480px Fixed-Width Shell -->
+  <div class="app-shell">
+
+    <!-- Top App Bar -->
+    <header class="app-header">
+      <div class="user-chip">
+        <span class="status-indicator"></span>
+        <span class="exercise-name">Squats Tracking</span>
+      </div>
+      <button class="icon-btn" aria-label="Settings">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="3"></circle>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+        </svg>
+      </button>
+    </header>
+
+    <!-- Main Viewport (3:4 Ratio Frame) -->
+    <main class="viewport-section">
+      <div class="viewfinder-frame">
+        <!-- Live Video & ML Overlay Elements -->
+        <video id="camera-stream" autoplay playsinline muted></video>
+        <canvas id="pose-canvas" class="pose-overlay"></canvas>
+
+        <!-- Positioning Brackets -->
+        <div class="reticle corner-tl"></div>
+        <div class="reticle corner-tr"></div>
+        <div class="reticle corner-bl"></div>
+        <div class="reticle corner-br"></div>
+
+        <!-- Real-Time Tracker Feedback Badge -->
+        <div class="hud-tag">
+          <span class="hud-pulse"></span> Form Match: 94%
+        </div>
+      </div>
+    </main>
+
+    <!-- Bottom Control Panel Card -->
+    <footer class="control-panel">
+      <!-- Live Metrics Display -->
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <span class="metric-label">REPS</span>
+          <span class="metric-value">16</span>
+        </div>
+        <div class="metric-card">
+          <span class="metric-label">FORM SCORE</span>
+          <span class="metric-value">A+</span>
+        </div>
+        <div class="metric-card">
+          <span class="metric-label">TIME</span>
+          <span class="metric-value">01:42</span>
+        </div>
+      </div>
+
+      <!-- Bottom Button Deck -->
+      <div class="actions-row">
+        <!-- Flip Camera -->
+        <button class="secondary-btn" aria-label="Switch Camera">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 10c0-4.418-3.582-8-8-8s-8 3.582-8 8c0 1.838.621 3.531 1.667 4.882L4 18h5v-5l-1.802 1.802A5.96 5.96 0 0 1 6 10c0-3.314 2.686-6 6-6s6 2.686 6 6c0 1.488-.544 2.848-1.447 3.899"></path>
+          </svg>
+        </button>
+
+        <!-- Primary Start/Stop Shutter Button -->
+        <button id="record-btn" class="primary-record-btn" aria-label="Toggle Workout Session">
+          <span class="record-core"></span>
+        </button>
+
+        <!-- Finish / Save Workout -->
+        <button class="secondary-btn" aria-label="Finish Set">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+        </button>
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- Micro-interaction script for the record button -->
+  <script>
+    const recordBtn = document.getElementById('record-btn');
+    recordBtn.addEventListener('click', () => {
+      recordBtn.classList.toggle('is-active');
+    });
+  </script>
+</body>
+   </html>
