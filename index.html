@@ -1,0 +1,325 @@
+/* ==========================================================================
+   CSS Variables & Design Tokens
+   ========================================================================== */
+:root {
+  /* Color Palette */
+  --bg-primary: #090d16;
+  --surface-card: rgba(19, 26, 42, 0.75);
+  --surface-border: rgba(255, 255, 255, 0.08);
+  --surface-hover: rgba(255, 255, 255, 0.12);
+
+  --accent-green: #00f59b;
+  --accent-glow: rgba(0, 245, 155, 0.35);
+  --accent-danger: #ff3b5c;
+
+  --text-main: #f8fafc;
+  --text-muted: #8492a6;
+
+  /* Typography Scale (fluid via clamp) */
+  --font-xs: clamp(0.688rem, 2.5vw, 0.75rem);
+  --font-sm: clamp(0.813rem, 3vw, 0.875rem);
+  --font-md: clamp(0.938rem, 3.5vw, 1rem);
+  --font-lg: clamp(1.25rem, 4.5vw, 1.5rem);
+  --font-xl: clamp(1.75rem, 6vw, 2.25rem);
+
+  /* Geometry & Spacing */
+  --radius-xl: 28px;
+  --radius-lg: 20px;
+  --radius-md: 14px;
+  --radius-pill: 9999px;
+  --safe-bottom: env(safe-area-inset-bottom, 16px);
+  --safe-top: env(safe-area-inset-top, 16px);
+}
+
+/* ==========================================================================
+   Base & Resets
+   ========================================================================== */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  background-color: var(--bg-primary);
+  color: var(--text-main);
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  overflow: hidden;
+}
+
+/* ==========================================================================
+   Fixed-width App Shell Layout (Max 480px)
+   ========================================================================== */
+.app-shell {
+  width: 100%;
+  max-width: 480px;
+  height: 100dvh; /* Dynamic viewport height prevents mobile bar overlap */
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+  background-color: var(--bg-primary);
+  padding: calc(var(--safe-top) + 8px) 16px var(--safe-bottom) 16px;
+}
+
+/* ==========================================================================
+   Header Section
+   ========================================================================== */
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 48px;
+  margin-bottom: 8px;
+  z-index: 10;
+}
+
+.user-chip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--surface-card);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--surface-border);
+  padding: 6px 14px;
+  border-radius: var(--radius-pill);
+}
+
+.status-indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent-green);
+  box-shadow: 0 0 8px var(--accent-green);
+}
+
+.exercise-name {
+  font-size: var(--font-sm);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.icon-btn {
+  background: var(--surface-card);
+  border: 1px solid var(--surface-border);
+  color: var(--text-main);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.15s ease;
+}
+
+.icon-btn:active {
+  transform: scale(0.92);
+  background: var(--surface-hover);
+}
+
+/* ==========================================================================
+   Viewfinder Section (3:4 Vertical Aspect Ratio)
+   ========================================================================== */
+.viewport-section {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  min-height: 0; /* Crucial for nested flexbox containment */
+  margin-bottom: 12px;
+}
+
+.viewfinder-frame {
+  width: 100%;
+  height: auto;
+  max-height: 100%;
+  aspect-ratio: 3 / 4;
+  position: relative;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background-color: #04060b;
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.45);
+  border: 1px solid var(--surface-border);
+}
+
+#camera-stream,
+.pose-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scaleX(-1); /* Mirrors front-facing camera */
+}
+
+.pose-overlay {
+  pointer-events: none;
+}
+
+/* Reticle brackets for pose positioning */
+.reticle {
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  pointer-events: none;
+}
+.corner-tl { top: 16px; left: 16px; border-right: none; border-bottom: none; border-top-left-radius: 6px; }
+.corner-tr { top: 16px; right: 16px; border-left: none; border-bottom: none; border-top-right-radius: 6px; }
+.corner-bl { bottom: 16px; left: 16px; border-right: none; border-top: none; border-bottom-left-radius: 6px; }
+.corner-br { bottom: 16px; right: 16px; border-left: none; border-top: none; border-bottom-right-radius: 6px; }
+
+/* Real-time HUD Pill */
+.hud-tag {
+  position: absolute;
+  top: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(9, 13, 22, 0.7);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid var(--surface-border);
+  padding: 4px 12px;
+  border-radius: var(--radius-pill);
+  font-size: var(--font-xs);
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-main);
+}
+
+.hud-pulse {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent-green);
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: scale(0.9); opacity: 0.7; }
+  50% { transform: scale(1.3); opacity: 1; }
+  100% { transform: scale(0.9); opacity: 0.7; }
+}
+
+/* ==========================================================================
+   Clean Control Panel Card (Bottom Deck)
+   ========================================================================== */
+.control-panel {
+  background: var(--surface-card);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--radius-xl);
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  z-index: 10;
+}
+
+/* Metrics Dashboard Inside Card */
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  text-align: center;
+  border-bottom: 1px solid var(--surface-border);
+  padding-bottom: 12px;
+}
+
+.metric-card {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.metric-label {
+  font-size: var(--font-xs);
+  color: var(--text-muted);
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
+.metric-value {
+  font-size: var(--font-lg);
+  font-weight: 800;
+  color: var(--text-main);
+  letter-spacing: -0.02em;
+}
+
+/* Action Trigger Buttons */
+.actions-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 8px;
+}
+
+.secondary-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--surface-border);
+  color: var(--text-main);
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.secondary-btn:active {
+  transform: scale(0.9);
+  background: var(--surface-hover);
+}
+
+/* Elevated Primary Record / Shutter Button */
+.primary-record-btn {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: transparent;
+  border: 3px solid var(--accent-green);
+  box-shadow: 0 0 16px var(--accent-glow);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 4px;
+  transition: transform 0.2s ease;
+}
+
+.primary-record-btn:active {
+  transform: scale(0.93);
+}
+
+.record-core {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background-color: var(--accent-green);
+  transition: all 0.2s ease;
+}
+
+/* Active recording toggle state (via JS class toggle) */
+.primary-record-btn.is-active .record-core {
+  border-radius: 8px;
+  background-color: var(--accent-danger);
+  transform: scale(0.55);
+}
+.primary-record-btn.is-active {
+  border-color: var(--accent-danger);
+  box-shadow: 0 0 16px rgba(255, 59, 92, 0.4);
+}
