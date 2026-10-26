@@ -1,440 +1,427 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>RepPulse AI | Lateral Vision Fitness Tracker</title>
   
-  <title>PulseFit AI Tracker</title>
-  
-  <!-- PWA & Mobile Web App Meta Tags -->
-  <meta name="theme-color" content="#090d16" />
-  <meta name="mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="PulseFit" />
-  <link rel="manifest" href="manifest.json" />
-
-  <!-- Preconnect & Typography -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            cyberDark: '#08090d',
+            cyberCard: '#11141e',
+            cyberBorder: '#1c2235',
+            neonCyan: '#00f2fe',
+            neonGreen: '#00ff88',
+            neonMagenta: '#ff0055',
+            neonAmber: '#ffaa00'
+          },
+          fontFamily: {
+            mono: ['JetBrains Mono', 'ui-monospace', 'SFMono-Regular', 'monospace'],
+            sans: ['Inter', 'system-ui', 'sans-serif']
+          },
+          boxShadow: {
+            'neon-cyan': '0 0 20px rgba(0, 242, 254, 0.35)',
+            'neon-green': '0 0 20px rgba(0, 255, 136, 0.4)',
+            'neon-magenta': '0 0 20px rgba(255, 0, 85, 0.4)'
+          }
+        }
+      }
+    }
+  </script>
 
   <style>
-    /* ==========================================================================
-       CSS Variables & Design Tokens
-       ========================================================================== */
-    :root {
-      /* Color Palette */
-      --bg-primary: #090d16;
-      --surface-card: rgba(19, 26, 42, 0.75);
-      --surface-border: rgba(255, 255, 255, 0.08);
-      --surface-hover: rgba(255, 255, 255, 0.12);
-
-      --accent-green: #00f59b;
-      --accent-glow: rgba(0, 245, 155, 0.35);
-      --accent-danger: #ff3b5c;
-
-      --text-main: #f8fafc;
-      --text-muted: #8492a6;
-
-      /* Responsive Typography Scale (fluid via clamp) */
-      --font-xs: clamp(0.688rem, 2.5vw, 0.75rem);
-      --font-sm: clamp(0.813rem, 3vw, 0.875rem);
-      --font-md: clamp(0.938rem, 3.5vw, 1rem);
-      --font-lg: clamp(1.25rem, 4.5vw, 1.5rem);
-      --font-xl: clamp(1.75rem, 6vw, 2.25rem);
-
-      /* Geometry & Safe Area Spacing */
-      --radius-xl: 28px;
-      --radius-lg: 20px;
-      --radius-md: 14px;
-      --radius-pill: 9999px;
-      --safe-bottom: env(safe-area-inset-bottom, 16px);
-      --safe-top: env(safe-area-inset-top, 16px);
-    }
-
-    /* ==========================================================================
-       Base Resets
-       ========================================================================== */
-    *, *::before, *::after {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
+    /* Mobile-first lock & native feel */
+    body {
+      background-color: #08090d;
+      color: #f1f5f9;
+      overscroll-behavior-y: none;
       -webkit-tap-highlight-color: transparent;
-      user-select: none;
     }
-
-    html, body {
-      width: 100%;
-      height: 100%;
-      background-color: var(--bg-primary);
-      color: var(--text-main);
-      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
-      overflow: hidden;
-    }
-
-    /* ==========================================================================
-       Fixed-Width App Shell Layout (max-width: 480px)
-       ========================================================================== */
-    .app-shell {
-      width: 100%;
-      max-width: 480px;
-      height: 100dvh; /* Dynamic viewport units prevent browser toolbar clipping */
-      margin: 0 auto;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      position: relative;
-      background-color: var(--bg-primary);
-      padding: calc(var(--safe-top) + 8px) 16px calc(var(--safe-bottom) + 8px) 16px;
-    }
-
-    /* ==========================================================================
-       Header Section
-       ========================================================================== */
-    .app-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      height: 48px;
-      margin-bottom: 8px;
-      z-index: 10;
-    }
-
-    .user-chip {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      background: var(--surface-card);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border: 1px solid var(--surface-border);
-      padding: 6px 14px;
-      border-radius: var(--radius-pill);
-    }
-
-    .status-indicator {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: var(--accent-green);
-      box-shadow: 0 0 8px var(--accent-green);
-    }
-
-    .exercise-name {
-      font-size: var(--font-sm);
-      font-weight: 600;
-      letter-spacing: -0.01em;
-    }
-
-    .icon-btn {
-      background: var(--surface-card);
-      border: 1px solid var(--surface-border);
-      color: var(--text-main);
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: background 0.2s ease, transform 0.15s ease;
-    }
-
-    .icon-btn:active {
-      transform: scale(0.92);
-      background: var(--surface-hover);
-    }
-
-    /* ==========================================================================
-       3:4 Vertical Camera Viewfinder Frame
-       ========================================================================== */
-    .viewport-section {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-      min-height: 0; /* Ensures proper aspect ratio scaling in flex layout */
-      margin-bottom: 12px;
-    }
-
-    .viewfinder-frame {
-      width: 100%;
-      height: auto;
-      max-height: 100%;
-      aspect-ratio: 3 / 4;
-      position: relative;
-      border-radius: var(--radius-lg);
-      overflow: hidden;
-      background-color: #04060b;
-      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.45);
-      border: 1px solid var(--surface-border);
-    }
-
-    #camera-stream,
-    .pose-overlay {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      transform: scaleX(-1); /* Mirrors front-facing camera preview */
-    }
-
-    .pose-overlay {
+    
+    /* Subtle scanline effect for cyber-fitness vision */
+    .scanlines {
+      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 242, 254, 0.04) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.02), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.02));
+      background-size: 100% 4px, 6px 100%;
       pointer-events: none;
     }
 
-    /* Corner Positioning Brackets */
-    .reticle {
-      position: absolute;
-      width: 24px;
-      height: 24px;
-      border: 2px solid rgba(255, 255, 255, 0.4);
-      pointer-events: none;
-    }
-    .corner-tl { top: 16px; left: 16px; border-right: none; border-bottom: none; border-top-left-radius: 6px; }
-    .corner-tr { top: 16px; right: 16px; border-left: none; border-bottom: none; border-top-right-radius: 6px; }
-    .corner-bl { bottom: 16px; left: 16px; border-right: none; border-top: none; border-bottom-left-radius: 6px; }
-    .corner-br { bottom: 16px; right: 16px; border-left: none; border-top: none; border-bottom-right-radius: 6px; }
-
-    /* Top HUD Badge */
-    .hud-tag {
-      position: absolute;
-      top: 14px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: rgba(9, 13, 22, 0.7);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      border: 1px solid var(--surface-border);
-      padding: 4px 12px;
-      border-radius: var(--radius-pill);
-      font-size: var(--font-xs);
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      color: var(--text-main);
+    /* Range meter animation */
+    .depth-bar-glow {
+      transition: width 0.12s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.2s ease;
     }
 
-    .hud-pulse {
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: var(--accent-green);
-      animation: pulse 1.5s infinite;
+    /* Modal blur styling */
+    .paywall-blur {
+      backdrop-filter: blur(18px) saturate(160%);
+      -webkit-backdrop-filter: blur(18px) saturate(160%);
     }
 
-    @keyframes pulse {
-      0% { transform: scale(0.9); opacity: 0.7; }
-      50% { transform: scale(1.3); opacity: 1; }
-      100% { transform: scale(0.9); opacity: 0.7; }
+    /* Pulsing animations */
+    @keyframes pulse-ring {
+      0% { transform: scale(0.95); opacity: 0.8; }
+      50% { transform: scale(1.05); opacity: 0.3; }
+      100% { transform: scale(0.95); opacity: 0.8; }
     }
-
-    /* ==========================================================================
-       Bottom Control Panel Card
-       ========================================================================== */
-    .control-panel {
-      background: var(--surface-card);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border: 1px solid var(--surface-border);
-      border-radius: var(--radius-xl);
-      padding: 16px 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-      z-index: 10;
-    }
-
-    /* Live Session Stats */
-    .metrics-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 12px;
-      text-align: center;
-      border-bottom: 1px solid var(--surface-border);
-      padding-bottom: 12px;
-    }
-
-    .metric-card {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
-
-    .metric-label {
-      font-size: var(--font-xs);
-      color: var(--text-muted);
-      font-weight: 700;
-      letter-spacing: 0.05em;
-    }
-
-    .metric-value {
-      font-size: var(--font-lg);
-      font-weight: 800;
-      color: var(--text-main);
-      letter-spacing: -0.02em;
-    }
-
-    /* Control Panel Buttons */
-    .actions-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 8px;
-    }
-
-    .secondary-btn {
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid var(--surface-border);
-      color: var(--text-main);
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    .secondary-btn:active {
-      transform: scale(0.9);
-      background: var(--surface-hover);
-    }
-
-    /* Primary Start / Stop Shutter */
-    .primary-record-btn {
-      width: 72px;
-      height: 72px;
-      border-radius: 50%;
-      background: transparent;
-      border: 3px solid var(--accent-green);
-      box-shadow: 0 0 16px var(--accent-glow);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      padding: 4px;
-      transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
-    }
-
-    .primary-record-btn:active {
-      transform: scale(0.93);
-    }
-
-    .record-core {
-      width: 100%;
-      height: 100%;
-      border-radius: 50%;
-      background-color: var(--accent-green);
-      transition: all 0.2s ease;
-    }
-
-    /* Active recording visual state */
-    .primary-record-btn.is-active {
-      border-color: var(--accent-danger);
-      box-shadow: 0 0 16px rgba(255, 59, 92, 0.4);
-    }
-
-    .primary-record-btn.is-active .record-core {
-      border-radius: 8px;
-      background-color: var(--accent-danger);
-      transform: scale(0.55);
+    .pulse-target {
+      animation: pulse-ring 2s infinite ease-in-out;
     }
   </style>
 </head>
-<body>
+<body class="flex justify-center bg-black min-h-screen font-sans antialiased select-none">
 
-  <!-- Max 480px Fixed-Width Shell -->
-  <div class="app-shell">
+  <!-- Mobile App Container Shell -->
+  <div class="relative w-full max-w-md h-[100dvh] flex flex-col justify-between overflow-hidden bg-cyberDark border-x border-cyberBorder/40">
 
-    <!-- Top App Bar -->
-    <header class="app-header">
-      <div class="user-chip">
-        <span class="status-indicator"></span>
-        <span class="exercise-name">Squats Tracking</span>
+    <!-- TOP NAV: Brand & Exercise Switcher -->
+    <header class="z-20 px-4 pt-3 pb-2 bg-cyberDark/90 backdrop-blur-md border-b border-cyberBorder">
+      <div class="flex items-center justify-between mb-2.5">
+        <div class="flex items-center gap-2">
+          <div class="w-2.5 h-2.5 rounded-full bg-neonCyan animate-ping"></div>
+          <h1 class="text-base font-black tracking-wider uppercase text-white font-mono flex items-center gap-1.5">
+            RepPulse <span class="text-xs bg-neonCyan/10 text-neonCyan px-1.5 py-0.5 rounded border border-neonCyan/30">AI 90°</span>
+          </h1>
+        </div>
+        
+        <!-- Demo Counter Badge -->
+        <div id="demo-badge" class="px-2.5 py-1 rounded-full text-[11px] font-mono font-semibold bg-cyberCard border border-cyberBorder text-slate-300 flex items-center gap-1.5">
+          <span>FREE DEMO:</span>
+          <span id="demo-counter-label" class="text-neonCyan font-bold">0 / 10</span>
+        </div>
       </div>
-      <button class="icon-btn" aria-label="Settings">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="12" r="3"></circle>
-          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
-        </svg>
-      </button>
+
+      <!-- Segmented Tab Control -->
+      <nav class="grid grid-cols-3 p-1 rounded-xl bg-cyberCard/80 border border-cyberBorder text-xs font-semibold">
+        <button id="tab-pushups" onclick="switchExercise('pushups')" class="py-1.5 rounded-lg transition-all text-cyberDark bg-neonCyan font-bold shadow-neon-cyan">
+          Push-ups
+        </button>
+        <button id="tab-squats" onclick="switchExercise('squats')" class="py-1.5 rounded-lg transition-all text-slate-400 hover:text-white">
+          Squats
+        </button>
+        <button id="tab-plank" onclick="switchExercise('plank')" class="py-1.5 rounded-lg transition-all text-slate-400 hover:text-white">
+          Plank Hold
+        </button>
+      </nav>
     </header>
 
-    <!-- Main Viewport (3:4 Ratio Frame) -->
-    <main class="viewport-section">
-      <div class="viewfinder-frame">
-        <!-- Live Video & ML Overlay Elements -->
-        <video id="camera-stream" autoplay playsinline muted></video>
-        <canvas id="pose-canvas" class="pose-overlay"></canvas>
+    <!-- CENTER VISION CAMERA CANVAS & HUD -->
+    <main class="relative flex-1 w-full overflow-hidden flex items-center justify-center bg-black">
+      
+      <!-- Video Element -->
+      <video id="webcam" autoplay playsinline muted class="absolute inset-0 w-full h-full object-cover -scale-x-100"></video>
+      
+      <!-- Scanlines & Grid Overlay -->
+      <div class="absolute inset-0 scanlines z-[2]"></div>
 
-        <!-- Positioning Brackets -->
-        <div class="reticle corner-tl"></div>
-        <div class="reticle corner-tr"></div>
-        <div class="reticle corner-bl"></div>
-        <div class="reticle corner-br"></div>
-
-        <!-- Real-Time Tracker Feedback Badge -->
-        <div class="hud-tag">
-          <span class="hud-pulse"></span> Form Match: 94%
+      <!-- Sideways Framing Guide Box (Targeting 90° view: Shoulders, Butt/Hips, Heels) -->
+      <div id="framing-guide" class="absolute inset-4 sm:inset-6 z-[3] pointer-events-none border border-dashed border-neonCyan/40 rounded-2xl flex flex-col justify-between p-3.5 transition-all duration-300">
+        
+        <!-- Framing Top Banner -->
+        <div class="flex items-center justify-between text-[11px] font-mono text-neonCyan/90 bg-cyberDark/80 backdrop-blur-md px-2.5 py-1.5 rounded-lg border border-neonCyan/30">
+          <div class="flex items-center gap-1.5">
+            <span class="inline-block w-2 h-2 rounded-full bg-neonCyan"></span>
+            <span class="font-bold">LATERAL 90° VIEW</span>
+          </div>
+          <span id="hip-sag-indicator" class="text-neonGreen">SAG RATIO: 180° (OPTIMAL)</span>
         </div>
+
+        <!-- Lateral Alignment Target Graphic -->
+        <div class="relative w-full h-28 my-auto flex items-center justify-between px-3 opacity-80">
+          <!-- Shoulder Node Guide -->
+          <div class="flex flex-col items-center gap-1">
+            <div class="w-8 h-8 rounded-full border border-neonCyan/60 flex items-center justify-center pulse-target bg-neonCyan/5">
+              <span class="text-[9px] font-mono text-neonCyan font-bold">SHLD</span>
+            </div>
+            <span class="text-[9px] font-mono text-slate-400">Head/Shoulder</span>
+          </div>
+
+          <!-- Connecting Hip Spine Axis -->
+          <div class="flex-1 h-0.5 border-b border-dashed border-neonCyan/30 mx-2 relative">
+            <div id="spine-vector" class="absolute inset-0 bg-neonCyan/20"></div>
+          </div>
+
+          <!-- Glute/Hip Node Guide -->
+          <div class="flex flex-col items-center gap-1">
+            <div class="w-9 h-9 rounded-full border-2 border-neonCyan flex items-center justify-center pulse-target bg-neonCyan/10">
+              <span class="text-[9px] font-mono text-neonCyan font-bold">HIPS</span>
+            </div>
+            <span class="text-[9px] font-mono text-slate-400">Glutes/Depth</span>
+          </div>
+
+          <!-- Connecting Leg Axis -->
+          <div class="flex-1 h-0.5 border-b border-dashed border-neonCyan/30 mx-2"></div>
+
+          <!-- Heels Node Guide -->
+          <div class="flex flex-col items-center gap-1">
+            <div class="w-8 h-8 rounded-full border border-neonCyan/60 flex items-center justify-center pulse-target bg-neonCyan/5">
+              <span class="text-[9px] font-mono text-neonCyan font-bold">HEEL</span>
+            </div>
+            <span class="text-[9px] font-mono text-slate-400">Feet Base</span>
+          </div>
+        </div>
+
+        <!-- Framing Instructions Footer Alert -->
+        <div class="bg-cyberDark/90 backdrop-blur-md rounded-xl p-2.5 border border-cyberBorder text-center">
+          <p class="text-xs text-slate-300 font-medium">
+            📱 <span class="text-white font-semibold">Place phone sideways at 90°</span> on floor or table. Align your <span class="text-neonCyan">shoulders, hips & heels</span>.
+          </p>
+        </div>
+      </div>
+
+      <!-- Skeleton Landmark Canvas Overlay (where MediaPipe draws) -->
+      <canvas id="pose-canvas" class="absolute inset-0 w-full h-full pointer-events-none z-[4]"></canvas>
+
+      <!-- Camera Feed Controls / Simulation Toggles -->
+      <div class="absolute top-4 right-4 z-10 flex gap-2">
+        <button onclick="toggleCameraFacing()" title="Flip Camera" class="p-2 rounded-xl bg-cyberDark/80 backdrop-blur-md border border-cyberBorder text-slate-300 active:scale-95 text-xs font-mono flex items-center gap-1">
+          🔄 Flip
+        </button>
+        <button onclick="triggerSimulatedRep()" title="Simulate Rep Cycle" class="p-2 rounded-xl bg-neonCyan/20 backdrop-blur-md border border-neonCyan/50 text-neonCyan active:scale-95 text-xs font-mono font-bold">
+          ⚡ Sim Rep
+        </button>
       </div>
     </main>
 
-    <!-- Bottom Control Panel Card -->
-    <footer class="control-panel">
-      <!-- Live Metrics Display -->
-      <div class="metrics-grid">
-        <div class="metric-card">
-          <span class="metric-label">REPS</span>
-          <span class="metric-value">16</span>
+    <!-- LIVE METRIC OVERLAY DASHBOARD -->
+    <footer class="z-20 px-4 pt-3 pb-5 bg-cyberDark/95 border-t border-cyberBorder flex flex-col gap-3">
+      
+      <!-- Top Row: Big Reps + Form State -->
+      <div class="grid grid-cols-12 gap-3 items-center">
+        <!-- Rep Counter -->
+        <div class="col-span-5 bg-cyberCard border border-cyberBorder rounded-2xl p-2.5 text-center flex flex-col justify-center">
+          <span id="metric-primary-label" class="text-[10px] uppercase font-mono tracking-wider text-slate-400 font-semibold">Validated Reps</span>
+          <div class="flex items-baseline justify-center gap-1">
+            <span id="rep-counter" class="text-4xl font-black font-mono tracking-tight text-white">0</span>
+            <span id="rep-target-subtext" class="text-xs font-mono text-slate-500">/10 max</span>
+          </div>
         </div>
-        <div class="metric-card">
-          <span class="metric-label">FORM SCORE</span>
-          <span class="metric-value">A+</span>
-        </div>
-        <div class="metric-card">
-          <span class="metric-label">TIME</span>
-          <span class="metric-value">01:42</span>
+
+        <!-- Real-time Phase State Machine Display -->
+        <div class="col-span-7 bg-cyberCard border border-cyberBorder rounded-2xl p-2.5 flex flex-col justify-between h-full">
+          <div class="flex items-center justify-between text-[11px] font-mono">
+            <span class="text-slate-400">ROM PHASE</span>
+            <span id="status-pill" class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-neonCyan/10 text-neonCyan border border-neonCyan/30">
+              READY
+            </span>
+          </div>
+          <div id="state-description" class="text-sm font-bold text-slate-100 truncate mt-1">
+            Top Plank Position
+          </div>
         </div>
       </div>
 
-      <!-- Bottom Button Deck -->
-      <div class="actions-row">
-        <!-- Flip Camera -->
-        <button class="secondary-btn" aria-label="Switch Camera">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M20 10c0-4.418-3.582-8-8-8s-8 3.582-8 8c0 1.838.621 3.531 1.667 4.882L4 18h5v-5l-1.802 1.802A5.96 5.96 0 0 1 6 10c0-3.314 2.686-6 6-6s6 2.686 6 6c0 1.488-.544 2.848-1.447 3.899"></path>
-          </svg>
-        </button>
+      <!-- Depth Percentage Meter Gauge -->
+      <div class="bg-cyberCard/90 border border-cyberBorder rounded-2xl p-3 flex flex-col gap-1.5">
+        <div class="flex justify-between items-center text-xs font-mono">
+          <span class="text-slate-400 flex items-center gap-1.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-neonCyan"></span>
+            Chest-to-Floor Depth
+          </span>
+          <span id="depth-percentage-text" class="text-neonCyan font-bold text-sm">0%</span>
+        </div>
 
-        <!-- Primary Start/Stop Shutter Button -->
-        <button id="record-btn" class="primary-record-btn" aria-label="Toggle Workout Session">
-          <span class="record-core"></span>
-        </button>
+        <!-- Visual Bar Track -->
+        <div class="w-full h-3 bg-cyberDark rounded-full overflow-hidden border border-cyberBorder/60 p-0.5 relative">
+          <!-- 80% Valid Depth Target Line Marker -->
+          <div class="absolute left-[80%] top-0 bottom-0 w-0.5 bg-neonGreen/80 z-10" title="Valid ROM Threshold"></div>
+          <!-- Filling Bar -->
+          <div id="depth-progress-bar" class="depth-bar-glow h-full w-[0%] bg-neonCyan rounded-full"></div>
+        </div>
 
-        <!-- Finish / Save Workout -->
-        <button class="secondary-btn" aria-label="Finish Set">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="20 6 9 17 4 12"></polyline>
-          </svg>
-        </button>
+        <div class="flex justify-between text-[10px] font-mono text-slate-500">
+          <span>0% (Plank)</span>
+          <span class="text-neonGreen">80% Target (Strict)</span>
+          <span>100% (Chest Floor)</span>
+        </div>
       </div>
+
     </footer>
+
+    <!-- SARCASTIC HARD PAYWALL MODAL OVERLAY (Non-dismissible) -->
+    <div id="paywall-modal" class="hidden absolute inset-0 z-50 paywall-blur bg-black/85 flex flex-col justify-end p-5">
+      
+      <!-- Paywall Dialog Card -->
+      <div class="bg-cyberCard border border-cyberBorder rounded-3xl p-5 shadow-2xl relative overflow-hidden flex flex-col gap-4 animate-in fade-in slide-in-from-bottom-8 duration-300">
+        
+        <!-- Glowing Ambient Accent -->
+        <div class="absolute -top-12 -right-12 w-32 h-32 rounded-full bg-neonMagenta/20 blur-2xl pointer-events-none"></div>
+        <div class="absolute -bottom-10 -left-10 w-28 h-28 rounded-full bg-neonCyan/20 blur-2xl pointer-events-none"></div>
+
+        <!-- Lock Icon & Header Tag -->
+        <div class="flex items-center justify-between">
+          <span class="px-3 py-1 rounded-full text-[11px] font-mono font-bold tracking-wider uppercase bg-neonMagenta/15 text-neonMagenta border border-neonMagenta/30">
+            DEMO SET DEPLETED
+          </span>
+          <span class="text-xs font-mono text-slate-400">Vision Locked 🔒</span>
+        </div>
+
+        <!-- Sarcastic Pitch Copy -->
+        <div class="space-y-1.5">
+          <h2 class="text-xl font-black tracking-tight text-white leading-tight">
+            "Your camera counted the reps. <br/><span class="text-neonCyan">Now count your excuses."</span>
+          </h2>
+          <p class="text-xs text-slate-300 leading-relaxed">
+            You just spent $15 on a bad pizza, but <span class="text-neonGreen font-semibold">$5 to hit your chest and squat goals</span> is where you draw the line?
+          </p>
+        </div>
+
+        <!-- Pricing Cards Switcher -->
+        <div class="grid grid-cols-3 gap-2 pt-1">
+          <!-- Monthly Tier (Popular) -->
+          <label class="cursor-pointer relative flex flex-col justify-between p-2.5 rounded-xl border-2 border-neonCyan bg-neonCyan/10 text-center transition-all hover:border-neonCyan">
+            <input type="radio" name="plan" value="monthly" checked class="hidden peer">
+            <span class="absolute -top-2 left-1/2 -translate-x-1/2 bg-neonCyan text-cyberDark font-black text-[9px] uppercase px-1.5 py-0.2 rounded-full">POPULAR</span>
+            <span class="text-[11px] font-mono text-slate-300 mt-1">Monthly</span>
+            <span class="text-lg font-black text-white">$5</span>
+            <span class="text-[9px] text-slate-400">/mo</span>
+          </label>
+
+          <!-- Annual Tier -->
+          <label class="cursor-pointer relative flex flex-col justify-between p-2.5 rounded-xl border border-cyberBorder bg-cyberDark text-center transition-all hover:border-slate-500">
+            <input type="radio" name="plan" value="annual" class="hidden peer">
+            <span class="text-[11px] font-mono text-slate-300 mt-1">Annual</span>
+            <span class="text-lg font-black text-white">$30</span>
+            <span class="text-[9px] text-slate-400">$2.50/mo</span>
+          </label>
+
+          <!-- Lifetime Tier -->
+          <label class="cursor-pointer relative flex flex-col justify-between p-2.5 rounded-xl border border-cyberBorder bg-cyberDark text-center transition-all hover:border-slate-500">
+            <input type="radio" name="plan" value="lifetime" class="hidden peer">
+            <span class="text-[11px] font-mono text-slate-300 mt-1">Lifetime</span>
+            <span class="text-lg font-black text-white">$150</span>
+            <span class="text-[9px] text-slate-400">one-time</span>
+          </label>
+        </div>
+
+        <!-- Value Bullet Points -->
+        <ul class="text-[11px] font-mono text-slate-300 space-y-1 py-1">
+          <li class="flex items-center gap-1.5">
+            <span class="text-neonCyan font-bold">✓</span> Real-time hip-sag & spine alignment check
+          </li>
+          <li class="flex items-center gap-1.5">
+            <span class="text-neonGreen font-bold">✓</span> Chest-to-floor strict depth validation
+          </li>
+          <li class="flex items-center gap-1.5">
+            <span class="text-neonMagenta font-bold">✓</span> Push-ups, Squats & Core Planks unlocked
+          </li>
+        </ul>
+
+        <!-- Hard Paywall Non-Dismissible Action Button -->
+        <button onclick="handleSubscribeClick()" class="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-neonCyan via-neonGreen to-neonCyan text-cyberDark font-black text-sm uppercase tracking-wider font-mono shadow-neon-green transition-transform active:scale-95 hover:brightness-110">
+          Unlock Unlimited AI Tracking
+        </button>
+
+        <p class="text-[9px] text-center text-slate-500 font-mono">
+          Cancel anytime. No lock-in contracts. Zero tolerance for half reps.
+        </p>
+      </div>
+    </div>
 
   </div>
 
-  <!-- Micro-interaction script for the record button -->
+  <!-- APPLICATION LOGIC & MEDIAPIPE LATERAL VISION STATE MACHINE -->
   <script>
-    const recordBtn = document.getElementById('record-btn');
-    recordBtn.addEventListener('click', () => {
-      recordBtn.classList.toggle('is-active');
-    });
-  </script>
-</body>
-   </html>
+    /* ==========================================================================
+       1. APP CONFIGURATION & STATE
+       ========================================================================== */
+    const CONFIG = {
+      DEMO_MAX_REPS: 10,
+      DEPTH_VALID_THRESHOLD: 80,   // Minimum % depth to trigger bottom position
+      DEPTH_RESET_THRESHOLD: 25,   // Returning past this resets cycle for next rep
+      PLANK_MAX_SECONDS: 30
+    };
+
+    let currentExercise = 'pushups'; // 'pushups' | 'squats' | 'plank'
+    let repCount = 0;
+    let currentDepth = 0;
+    let cameraStream = null;
+    let useFacingMode = 'environment'; // lateral rear camera view is ideal
+    let isPaywallTriggered = false;
+
+    // Push-up / Squat State Machine phases:
+    // 'TOP' -> 'LOWERING' -> 'BOTTOM' -> 'ASCENDING' -> (Count Rep -> 'TOP')
+    let repCyclePhase = 'TOP';
+
+    // Plank Hold State
+    let plankSeconds = 0;
+    let plankTimerInterval = null;
+
+    /* ==========================================================================
+       2. WEB AUDIO API SYNTHESIZER (Cyber feedback sounds)
+       ========================================================================== */
+    const AudioEngine = {
+      ctx: null,
+      init() {
+        if (!this.ctx) {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          this.ctx = new AudioContext();
+        }
+      },
+      beep(freq = 440, type = 'sine', duration = 0.08) {
+        try {
+          this.init();
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = type;
+          osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+          gain.gain.setValueAtTime(0.15, this.ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + duration);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start();
+          osc.stop(this.ctx.currentTime + duration);
+        } catch (e) {
+          // Audio blocked until user interaction
+        }
+      },
+      playBottomReached() {
+        this.beep(520, 'triangle', 0.1);
+      },
+      playRepComplete() {
+        this.beep(880, 'sine', 0.15);
+        setTimeout(() => this.beep(1174, 'sine', 0.2), 100);
+      },
+      playWarning() {
+        this.beep(220, 'sawtooth', 0.2);
+      }
+    };
+
+    /* ==========================================================================
+       3. CAMERA STREAM & CANVAS SETUP
+       ========================================================================== */
+    const video = document.getElementById('webcam');
+    const canvas = document.getElementById('pose-canvas');
+    const ctx = canvas.getContext('2d');
+
+    async function initCamera() {
+      if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        try {
+          if (cameraStream) {
+            cameraStream.getTracks().forEach(track => track.stop());
+          }
+          const constraints = {
+            video: {
+              facingMode: useFacingMode,
+              width: { ideal: 1280 },
+              height: { ideal: 720 }
+            },
+            audio: false
+          };
+          cameraStream = await navigator.mediaDevices.getUserMedia(constraints);
+          video.srcObject = cameraStream;
+          video.onloadedmetadata = () => {
+            adjustCanvasSize();
+            requestAnimationFrame(renderVisionLoop);
+          };
+        } catch (err) {
+          console.warn("Camera access denied or unavailable. Fallback to simulation mode:", err);
+        }
+      }
+    }
+
+    function toggleCameraFacing() {
+      useFaci
